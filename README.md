@@ -39,7 +39,7 @@ make
 
 ### Run
 
-To run Consolebeat with debugging output enabled, run:
+To run Consolebeat with debugging output enabled, run and type something:
 
 ```
 ./consolebeat -c consolebeat.yml -e -d "*"
