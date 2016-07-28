@@ -45,7 +45,9 @@ func (bt *Consolebeat) Run(b *beat.Beat) error {
         scanner := bufio.NewScanner(os.Stdin)
         for {
             for scanner.Scan() {
-                ch <- scanner.Text()
+                if line := scanner.Text(); !bt.config.SkipEmptyLine || line != "" {
+                    ch <- line
+                }
             }
             if scanner.Err() != nil {
                 close(ch)
