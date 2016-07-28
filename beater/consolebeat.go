@@ -45,8 +45,10 @@ func (bt *Consolebeat) Run(b *beat.Beat) error {
         scanner := bufio.NewScanner(os.Stdin)
         for {
             for scanner.Scan() {
-                if line := scanner.Text(); !bt.config.SkipEmptyLine || line != "" {
-                    ch <- line
+                if line := scanner.Text(); !bt.isSkipEmptyLine(line) {
+                    if !bt.isExcludeLines(line) {
+                        ch <- line
+                    }
                 }
             }
             if scanner.Err() != nil {
@@ -80,4 +82,20 @@ func (bt *Consolebeat) Run(b *beat.Beat) error {
 func (bt *Consolebeat) Stop() {
     bt.client.Close()
     close(bt.done)
+}
+
+func (bt *Consolebeat) isSkipEmptyLine(line string) bool {
+    return bt.config.SkipEmptyLine && line == ""
+}
+
+func (bt *Consolebeat) isExcludeLines(line string) bool {
+    if len(bt.config.ExcludeLines) > 0 {
+        for _, rexp := range bt.config.ExcludeLines {
+            if rexp.MatchString(line) {
+                return true
+            }
+        }
+    }
+
+    return false
 }

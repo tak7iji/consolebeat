@@ -6,6 +6,7 @@ consolebeat:
   # Defines how often an event is sent to the output
   period: 5s
   skip_empty_line: true
+  exclude_lines: ["^DBG"]
 
 #================================ General =====================================
 
