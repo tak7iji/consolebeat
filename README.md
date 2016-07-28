@@ -1,9 +1,6 @@
 # Consolebeat
 
-Welcome to Consolebeat.
-
-Ensure that this folder is at the following location:
-`${GOPATH}/github.com/tak7iji`
+Beats for Console input. This beat is useful to debug ELK stack.
 
 ## Getting Started with Consolebeat
 
