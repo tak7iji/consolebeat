@@ -45,6 +45,11 @@ To run Consolebeat with debugging output enabled, run and type something:
 ./consolebeat -c consolebeat.yml -e -d "*"
 ```
 
+or 
+
+```
+vmstat -n 5 | ./consolebeat -c consolebeat.yml -e -d "*"
+```
 
 ### Test
 
