@@ -4,7 +4,7 @@
 
 consolebeat:
   # Defines how often an event is sent to the output
-  period: 1s
+  period: 5s
 
 #================================ General =====================================
 
@@ -27,9 +27,9 @@ consolebeat:
 # Multiple outputs may be used.
 
 #-------------------------- Elasticsearch output ------------------------------
-output.elasticsearch:
+#output.elasticsearch:
   # Array of hosts to connect to.
-  hosts: ["localhost:9200"]
+  #hosts: ["localhost:9200"]
 
   # Optional protocol and basic auth credentials.
   #protocol: "https"
@@ -50,6 +50,10 @@ output.elasticsearch:
 
   # Client Certificate Key
   #tls.certificate_key: "/etc/pki/client/cert.key"
+
+#----------------------------- Console output --------------------------------
+output.console:
+  pretty: true
 
 #================================ Logging =====================================
 

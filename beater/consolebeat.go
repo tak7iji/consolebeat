@@ -1,62 +1,81 @@
 package beater
 
 import (
-	"fmt"
-	"time"
+    "fmt"
+    "bufio"
+    "os"
+    "time"
 
-	"github.com/elastic/beats/libbeat/beat"
-	"github.com/elastic/beats/libbeat/common"
-	"github.com/elastic/beats/libbeat/logp"
-	"github.com/elastic/beats/libbeat/publisher"
+    "github.com/elastic/beats/libbeat/beat"
+    "github.com/elastic/beats/libbeat/common"
+    "github.com/elastic/beats/libbeat/logp"
+    "github.com/elastic/beats/libbeat/publisher"
 
-	"github.com/tak7iji/consolebeat/config"
+    "github.com/tak7iji/consolebeat/config"
 )
 
 type Consolebeat struct {
-	done       chan struct{}
-	config     config.Config
-	client     publisher.Client
+    done       chan struct{}
+    config     config.Config
+    client     publisher.Client
 }
 
 // Creates beater
 func New(b *beat.Beat, cfg *common.Config) (beat.Beater, error) {
-	config := config.DefaultConfig
-	if err := cfg.Unpack(&config); err != nil {
-		return nil, fmt.Errorf("Error reading config file: %v", err)
-	}
+    config := config.DefaultConfig
+    if err := cfg.Unpack(&config); err != nil {
+        return nil, fmt.Errorf("Error reading config file: %v", err)
+    }
 
-	bt := &Consolebeat{
-		done: make(chan struct{}),
-		config: config,
-	}
-	return bt, nil
+    bt := &Consolebeat{
+        done: make(chan struct{}),
+        config: config,
+    }
+    return bt, nil
 }
 
 func (bt *Consolebeat) Run(b *beat.Beat) error {
-	logp.Info("consolebeat is running! Hit CTRL-C to stop it.")
+    logp.Info("consolebeat is running! Hit CTRL-C to stop it.")
 
-	bt.client = b.Publisher.Connect()
-	ticker := time.NewTicker(bt.config.Period)
-	counter := 1
-	for {
-		select {
-		case <-bt.done:
-			return nil
-		case <-ticker.C:
-		}
+    bt.client = b.Publisher.Connect()
+    ticker := time.NewTicker(bt.config.Period)
+    ch := make(chan string)
 
-		event := common.MapStr{
-			"@timestamp": common.Time(time.Now()),
-			"type":       b.Name,
-			"counter":    counter,
-		}
-		bt.client.PublishEvent(event)
-		logp.Info("Event sent")
-		counter++
-	}
+    go func(ch chan string) {
+        scanner := bufio.NewScanner(os.Stdin)
+        for {
+            for scanner.Scan() {
+                ch <- scanner.Text()
+            }
+            if scanner.Err() != nil {
+                close(ch)
+                return
+            }
+        }
+    }(ch)
+
+    for {
+        select {
+        case <-bt.done:
+            return nil
+        case text, ok := <-ch:
+            if !ok {
+                return nil
+            }
+            event := common.MapStr{
+                "@timestamp": common.Time(time.Now()),
+                "type":       b.Name,
+                "messaage":   text,
+            }
+            bt.client.PublishEvent(event)
+            logp.Info("Event sent")
+        case <-ticker.C:
+            logp.Info("Timeout")
+        }
+    }
 }
 
 func (bt *Consolebeat) Stop() {
-	bt.client.Close()
-	close(bt.done)
+    bt.client.Close()
+    close(bt.done)
 }

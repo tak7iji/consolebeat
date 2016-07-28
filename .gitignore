@@ -5,3 +5,4 @@
 /consolebeat
 /consolebeat.test
 *.pyc
+logs/
