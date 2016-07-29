@@ -74,7 +74,6 @@ func (bt *Consolebeat) Run(b *beat.Beat) error {
             bt.client.PublishEvent(event)
             logp.Info("Event sent")
         case <-ticker.C:
-            logp.Info("Timeout")
         }
     }
 }
