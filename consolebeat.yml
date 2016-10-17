@@ -27,9 +27,9 @@ consolebeat:
 # Multiple outputs may be used.
 
 #-------------------------- Elasticsearch output ------------------------------
-output.elasticsearch:
+#output.elasticsearch:
   # Array of hosts to connect to.
-  hosts: ["localhost:9200"]
+#  hosts: ["localhost:9200"]
 
   # Optional protocol and basic auth credentials.
   #protocol: "https"
@@ -50,6 +50,8 @@ output.elasticsearch:
 
   # Client Certificate Key
   #ssl.key: "/etc/pki/client/cert.key"
+
+output.console:
 
 #================================ Logging =====================================
 
