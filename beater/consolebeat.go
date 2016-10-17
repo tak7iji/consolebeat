@@ -66,11 +66,15 @@ func (bt *Consolebeat) Run(b *beat.Beat) error {
             if !ok {
                 return nil
             }
-            event := common.MapStr{
-                "@timestamp": common.Time(time.Now()),
-                "type":       b.Name,
-                "messaage":   text,
-            }
+//            event := common.MapStr{
+//                "@timestamp": common.Time(time.Now()),
+//                "type":       b.Name,
+//                "messaage":   text,
+//            }
+            event := common.MapStr
+            event.Put("@timestamp", common.Time(time.Now()))
+            event.Put("type", b.Name)
+            event.Put("message", text)
             bt.client.PublishEvent(event)
             logp.Info("Event sent")
         case <-ticker.C:
