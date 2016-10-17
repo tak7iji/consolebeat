@@ -6,3 +6,4 @@
 /consolebeat.test
 *.pyc
 logs/
+env/
